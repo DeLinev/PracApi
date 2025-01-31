@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api')]
 class ApiController extends AbstractController {
@@ -22,6 +23,7 @@ class ApiController extends AbstractController {
     }
 
     #[Route('/users/{id}', name: 'user', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function getItem(string $id): JsonResponse {
         $user = $this->findUserById($id);
 
@@ -31,6 +33,7 @@ class ApiController extends AbstractController {
     }
 
     #[Route('/users', name: 'create_user', methods: ['POST'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function createItem(Request $request): JsonResponse {
         $jsonData = json_decode($request->getContent(), true);
 
@@ -52,12 +55,14 @@ class ApiController extends AbstractController {
     }
 
     #[Route('/users/{id}', name: 'delete_user', methods: ['DELETE'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function deleteItem(string $id): JsonResponse {
         $this->deleteUserById($id);
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
 
     #[Route('/users/{id}', name: 'update_user', methods: ['PATCH'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function updateItem(Request $request, string $id): JsonResponse {
         $jsonData = json_decode($request->getContent(), true);
 
