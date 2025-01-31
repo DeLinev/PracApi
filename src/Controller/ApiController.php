@@ -12,24 +12,12 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/api')]
 class ApiController extends AbstractController {
-    public $users = [
-        ["id" => 1, "username" => "john_doe", "email" => "john@example.com"],
-        ["id" => 2, "username" => "jane_smith", "email" => "jane@example.com"],
-        ["id" => 3, "username" => "michael_b", "email" => "michael@example.com"],
-        ["id" => 4, "username" => "sarah_lee", "email" => "sarah@example.com"],
-        ["id" => 5, "username" => "david_jones", "email" => "david@example.com"],
-        ["id" => 6, "username" => "emma_w", "email" => "emma@example.com"],
-        ["id" => 7, "username" => "william_k", "email" => "william@example.com"],
-        ["id" => 8, "username" => "olivia_r", "email" => "olivia@example.com"],
-        ["id" => 9, "username" => "james_m", "email" => "james@example.com"],
-        ["id" => 10, "username" => "sophia_t", "email" => "sophia@example.com"],
-        ["id" => 11, "username" => "delinev", "email" => "ipz231_ldyu@studen.ztu.edu.ua"],
-    ];
+    private string $usersPath = __DIR__ . "/../../data/users.json";
 
     #[Route('/users', name: 'users', methods: ['GET'])]
     public function getCollection(): JsonResponse {
         return new JsonResponse([
-            'data' => $this->users
+            'data' => $this->getUsersFromJson()
         ], Response::HTTP_OK);
     }
 
@@ -47,14 +35,16 @@ class ApiController extends AbstractController {
         $jsonData = json_decode($request->getContent(), true);
 
         $this->validateUserData($jsonData);
+        $users = $this->getUsersFromJson();
 
         $newUser = [
-            'id' => count($this->users) + 1,
+            'id' => count($users) + 1,
             'username' => $jsonData['username'],
             'email' => $jsonData['email']
         ];
 
-        $this->users[] = $newUser;
+        $users[] = $newUser;
+        $this->saveUsersToJson($users);
 
         return new JsonResponse([
             'data' => $newUser
@@ -86,8 +76,20 @@ class ApiController extends AbstractController {
         ], Response::HTTP_OK);
     }
 
+    private function getUsersFromJson(): array {
+        if (!file_exists($this->usersPath)) {
+            return [];
+        }
+
+        return json_decode(file_get_contents($this->usersPath), true) ?? [];
+    }
+
+    private function saveUsersToJson(array $users): void {
+        file_put_contents($this->usersPath, json_encode($users, JSON_PRETTY_PRINT));
+    }
+
     private function findUserById($id): array {
-        foreach ($this->users as $user) {
+        foreach ($this->getUsersFromJson() as $user) {
             if ($user['id'] == $id) {
                 return $user;
             }
@@ -97,10 +99,13 @@ class ApiController extends AbstractController {
     }
 
     private function deleteUserById($id): void {
-        for ($i = 0; $i < count($this->users); $i++) {
-            if ($this->users[$i]['id'] == $id) {
-                unset($this->users[$i]);
-                $this->users = array_values($this->users);
+        $users = $this->getUsersFromJson();
+
+        for ($i = 0; $i < count($users); $i++) {
+            if ($users[$i]['id'] == $id) {
+                unset($users[$i]);
+                $users = array_values($users);
+                $this->saveUsersToJson($users);
                 return;
             }
         }
@@ -109,10 +114,13 @@ class ApiController extends AbstractController {
     }
 
     private function updateUsernameById($id, string $username): array {
-        for ($i = 0; $i < count($this->users); $i++) {
-            if ($this->users[$i]['id'] == $id) {
-                $this->users[$i]['username'] = $username;
-                return $this->users[$i];
+        $users = $this->getUsersFromJson();
+
+        for ($i = 0; $i < count($users); $i++) {
+            if ($users[$i]['id'] == $id) {
+                $users[$i]['username'] = $username;
+                $this->saveUsersToJson($users);
+                return $users[$i];
             }
         }
 

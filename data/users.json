@@ -1,0 +1,52 @@
+[
+    {
+        "id": 1,
+        "username": "john_doe",
+        "email": "john@example.com"
+    },
+    {
+        "id": 2,
+        "username": "jane_smith",
+        "email": "jane@example.com"
+    },
+    {
+        "id": 3,
+        "username": "michael_b",
+        "email": "michael@example.com"
+    },
+    {
+        "id": 4,
+        "username": "sarah_lee",
+        "email": "sarah@example.com"
+    },
+    {
+        "id": 5,
+        "username": "david_jones",
+        "email": "david@example.com"
+    },
+    {
+        "id": 7,
+        "username": "william_k",
+        "email": "william@example.com"
+    },
+    {
+        "id": 8,
+        "username": "olivia_r",
+        "email": "olivia@example.com"
+    },
+    {
+        "id": 9,
+        "username": "james_m",
+        "email": "james@example.com"
+    },
+    {
+        "id": 10,
+        "username": "sophia_t",
+        "email": "sophia@example.com"
+    },
+    {
+        "id": 11,
+        "username": "delinev",
+        "email": "ipz231_ldyu@studen.ztu.edu.ua"
+    }
+]
