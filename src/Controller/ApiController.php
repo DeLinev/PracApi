@@ -41,7 +41,7 @@ class ApiController extends AbstractController {
         $users = $this->getUsersFromJson();
 
         $newUser = [
-            'id' => count($users) + 1,
+            'id' => $users[count($users) - 1]['id'] + 1,
             'username' => $jsonData['username'],
             'email' => $jsonData['email']
         ];
